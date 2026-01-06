@@ -14,6 +14,8 @@ The project demonstrates comprehensive MLOps practices including:
 
 ### Team Contributions
 
+## Group: Group 55
+
 | Name | BITS ID | Contribution |
 |------|---------|--------------|
 | KIRANJEET KAUR ISHAR | 2024aa05769 | 100% |
