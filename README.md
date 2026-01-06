@@ -28,7 +28,7 @@ The project demonstrates comprehensive MLOps practices including:
 
 ## Demo Video
 
-https://www.youtube.com/watch?v=FD73QdivBgw
+https://www.youtube.com/watch?v=7_EL_p9w2WQ
 
 ## Model Training
 
