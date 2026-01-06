@@ -1,7 +1,7 @@
 # Core dependencies for Flask ML inference app
 Flask==3.1.2
 pandas==2.0.3
-scikit-learn==1.8.0
+scikit-learn==1.4.2
 numpy==1.26.4
 joblib==1.4.2
 prometheus-flask-exporter==0.23.0
