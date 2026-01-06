@@ -1,11 +1,9 @@
-# MLOPS_Heart_Disease/test/test_data.py
-
 import pytest
 import pandas as pd
 import sys
 import os
 
-# src folder ko path mein add karo taki hum modules import kar sakein
+# Add src folder to path so we can import modules
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from data_processor import load_data, split_data
 
@@ -18,7 +16,7 @@ def test_data_loading_and_shape():
         pytest.fail("Data file not found. Ensure 'data/cleveland.data' is present.")
         
     assert isinstance(df, pd.DataFrame), "Loaded data is not a pandas DataFrame"
-    # Cleveland data mein 297 cleaned rows hoti hain
+    # Cleveland data contains approximately 297 cleaned rows
     assert df.shape[0] >= 290, "Data size is too small"
     assert df['target'].isin([0, 1]).all(), "Target column contains unexpected values"
 

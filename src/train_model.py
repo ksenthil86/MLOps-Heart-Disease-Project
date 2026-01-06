@@ -1,6 +1,3 @@
-# MLOPS_Heart_Disease/src/train_model.py
-
-from eda import run_eda
 import mlflow
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -14,34 +11,34 @@ def train_and_log_model(model, X_train, y_train, X_test, y_test,
     """
     Trains the model with preprocessing pipeline and logs metrics to MLflow.
     """
-    # Poora MLOps Pipeline banao (Preprocessor + Model)
+    # Create complete MLOps pipeline (Preprocessor + Model)
     pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                (model_name.lower(), model)])
 
     with mlflow.start_run(run_name=model_name):
 
-        # 1. Model Train Karo
+        # 1. Train the model
         pipeline.fit(X_train, y_train)
         y_pred = pipeline.predict(X_test)
 
-        # y_proba for AUC calculation (zaroori)
+        # Calculate probabilities for AUC calculation
         if hasattr(pipeline, "predict_proba"):
             y_proba = pipeline.predict_proba(X_test)[:, 1]
         else:
             y_proba = y_pred
 
-        # 2. Metrics Calculate Karo
+        # 2. Calculate metrics
         accuracy = accuracy_score(y_test, y_pred)
         auc = roc_auc_score(y_test, y_proba)
         f1 = f1_score(y_test, y_pred)
 
-        # 3. Logging (Parameters aur Metrics)
+        # 3. Log parameters and metrics
         mlflow.log_params(model.get_params())
         mlflow.log_metric("accuracy", accuracy)
         mlflow.log_metric("roc_auc", auc)
         mlflow.log_metric("f1_score", f1)
 
-        # 4. Model Log Karo (Task 4: Packaging complete)
+        # 4. Log the model
         mlflow.sklearn.log_model(
             sk_model=pipeline,
             registered_model_name=f"{model_name}_Heart_Classifier"
@@ -58,7 +55,7 @@ def run_training():
     mlflow.set_tracking_uri("./mlruns")
     experiment_name = "Heart_Disease_Prediction_Assignment"
 
-    # Experiment check aur set
+    # Check and set experiment
     if mlflow.get_experiment_by_name(experiment_name) is None:
         mlflow.create_experiment(experiment_name)
     mlflow.set_experiment(experiment_name)
@@ -68,20 +65,17 @@ def run_training():
     X_train, X_test, y_train, y_test = split_data(data)
     preprocessor = create_preprocessor(data)
 
-    # 3.  EDA 
-    run_eda(data)
-
-    # 4. Model Definitions
+    # 3. Model Definitions
     lr = LogisticRegression(solver='liblinear', random_state=42)
     rf = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    # 5. Training and Logging
+    # 4. Training and Logging
     lr_auc = train_and_log_model(lr, X_train, y_train, X_test, y_test,
                                  preprocessor, "LogisticRegression")
     rf_auc = train_and_log_model(rf, X_train, y_train, X_test, y_test,
                                  preprocessor, "RandomForest")
 
-    # 6. Final Decision
+    # 5. Final Decision
     if lr_auc > rf_auc:
         print(f"\nFinal Decision: Logistic Regression is the best model "
               f"(ROC AUC: {lr_auc:.4f}).")
@@ -92,4 +86,3 @@ def run_training():
 
 if __name__ == '__main__':
     run_training()
-# End of src/train_model.py
