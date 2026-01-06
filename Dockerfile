@@ -1,37 +1,31 @@
 # 1. Base Image: Lightweight Python environment
-# Alpine Linux use kar rahe hain, jo chota hota hai
-FROM python:3.10-slim
+# Using Python slim image which is lightweight
+FROM python:3.11-slim
 
-# Environment variable set karo
-ENV PYTHONUNBUFFERED 1
-ENV APP_HOME /app
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV APP_HOME=/app
 WORKDIR $APP_HOME
 
-# 2. Files Copy Karo
-# requirements.txt ko pehle copy karte hain taaki caching fast ho
+# 2. Copy Files
+# Copy requirements.txt first for better caching
 COPY requirements.txt .
 
-# 3. Dependencies Install Karo
-# Flask aur gunicorn ko bhi add karna padega agar requirements.txt mein nahi hain
-# Gunicorn is needed for production server
+# 3. Install Dependencies
+# Add Flask if not already in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install gunicorn flask
+    && pip install flask
 
-# 4. MLflow Tracking Setup (Required to load model from MLflow)
-# Hamein MLflow server se model load karna hai, jiske liye ho sakta hai ki aapka 
-# MLflow Tracking URI private ho. Lekin is case mein hum local model artifacts 
-# (mlruns folder) ko use karenge jo CI/CD ne banaya tha.
+# 4. Copy Application Code
+# Copy the trained model
+COPY models/ $APP_HOME/models/
 
-# CI/CD se aaye hue artifacts ko copy karo (jo git mein aana chahiye)
-COPY mlruns/ $APP_HOME/mlruns/
-
-# app.py script ko copy karo
+# Copy app.py script
 COPY app.py $APP_HOME
 
 # 5. Container Run Command
-# Port 5000 ko expose karo (jahan Flask server run hoga)
-EXPOSE 5000
+# Expose port 8080 where Flask server will run
+EXPOSE 8080
 
-# Gunicorn use karke production-ready server run karo
-# Workers 2 ya 4 use kar sakte hain
-CMD exec gunicorn --bind 0.0.0.0:5000 --workers 4 app:app
+# Run app.py directly with Python
+CMD ["python", "app.py"]
