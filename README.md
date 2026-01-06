@@ -202,20 +202,7 @@ View recent events:
 kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
 ```
 
-## Cleanup
-
-Delete all resources:
-```bash
-kubectl delete -f k8s/
-```
-
-Or delete individually:
-```bash
-kubectl delete deployment heart-disease-app
-kubectl delete service heart-disease-app-service
-```
-
-## Verification Screenshots Commands
+## Verification Commands
 
 Run these commands for documentation:
 ```bash
@@ -232,6 +219,20 @@ kubectl get pods -o wide
 kubectl get svc heart-disease-app-service
 
 # 5. Test endpoints
+```
+
+## Cleanup
+
+Delete all resources:
+```bash
+kubectl delete -f k8s/
+```
+
+Or delete individually:
+```bash
+kubectl delete deployment heart-disease-app
+kubectl delete service heart-disease-app-service
+```
 curl http://localhost/health
 curl -X POST http://localhost/predict -H "Content-Type: application/json" -d '{"age": 63, "sex": 1, "cp": 3, "trestbps": 145, "chol": 233, "fbs": 1, "restecg": 0, "thalach": 150, "exang": 0, "oldpeak": 2.3, "slope": 0, "ca": 0, "thal": 1}'
 ```
