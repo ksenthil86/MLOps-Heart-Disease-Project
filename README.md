@@ -27,7 +27,7 @@ The project demonstrates comprehensive MLOps practices including:
 ## Model Training
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.12
 - Required packages: scikit-learn, pandas, mlflow, joblib
 
 ### Installation
