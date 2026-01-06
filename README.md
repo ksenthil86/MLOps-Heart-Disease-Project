@@ -221,7 +221,7 @@ curl -X POST http://localhost/predict \
 
 **Patient with high-risk indicators:**
 ```bash
-curl -X POST http://localhost:8080/predict \
+curl -X POST http://localhost/predict \
   -H "Content-Type: application/json" \
   -d '{
     "age": 70,
