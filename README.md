@@ -124,32 +124,49 @@ After training a new model, rebuild and redeploy using the instructions provided
 docker build -t heart-disease-app:latest .
 ```
 
-### 2. Deploy to Kubernetes
+### 2. Deploy Application to Kubernetes
 ```bash
+# Deploy the ML application
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/service.yaml
 ```
 
-### 3. Verify Deployment
+### 3. Deploy Monitoring Stack
+
+#### Deploy Prometheus
+```bash
+kubectl apply -f k8s/prometheus-deployment.yaml
+```
+
+#### Deploy Grafana
+```bash
+kubectl apply -f k8s/grafana-deployment.yaml
+```
+
+### 4. Verify All Deployments
 
 Check all resources:
 ```bash
 kubectl get all
 ```
 
+Expected output should show:
+- `deployment.apps/heart-disease-app` (READY: 2/2)
+- `deployment.apps/prometheus` (READY: 1/1)
+- `deployment.apps/grafana` (READY: 1/1)
+- Services for all three deployments
+- Pods in Running state
+
 Check pod status:
 ```bash
 kubectl get pods
 kubectl get deployments
+kubectl get services
 ```
 
-View logs:
-```bash
-kubectl logs -l app=heart-disease-app
-```
+### 5. Access the Services
 
-### 4. Access the Application
-
+#### Access the ML Application
 Get the service details:
 ```bash
 kubectl get svc heart-disease-app-service
@@ -157,19 +174,122 @@ kubectl get svc heart-disease-app-service
 
 The LoadBalancer service will be available at `localhost:80`
 
-Test health endpoint:
+**Test health endpoint:**
 ```bash
 curl http://localhost/health
 ```
 
-Test prediction endpoint:
+**Test prediction endpoint:**
 ```bash
-curl -X POST http://localhost/predict -H "Content-Type: application/json" -d '{"age": 63, "sex": 1, "cp": 3, "trestbps": 145, "chol": 233, "fbs": 1, "restecg": 0, "thalach": 150, "exang": 0, "oldpeak": 2.3, "slope": 0, "ca": 0, "thal": 1}'
+curl -X POST http://localhost/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 63,
+    "sex": 1,
+    "cp": 3,
+    "trestbps": 145,
+    "chol": 233,
+    "fbs": 1,
+    "restecg": 0,
+    "thalach": 150,
+    "exang": 0,
+    "oldpeak": 2.3,
+    "slope": 0,
+    "ca": 0,
+    "thal": 1
+  }'
+```
+
+#### Access Prometheus
+```bash
+kubectl get svc prometheus-service
+```
+
+Access Prometheus UI:
+- URL: http://localhost:9090
+- Check targets: http://localhost:9090/targets
+- Verify the app metrics are being scraped
+
+**Useful Prometheus Queries:**
+- `flask_http_request_total` - Total HTTP requests
+- `flask_http_request_duration_seconds` - Request duration
+- `rate(flask_http_request_total[5m])` - Request rate over 5 minutes
+- `flask_http_request_exceptions_total` - Total exceptions
+
+#### Access Grafana
+```bash
+kubectl get svc grafana-service
+```
+
+Access Grafana UI:
+- URL: http://localhost:3000
+- Default credentials: admin/admin (change on first login)
+
+**Configure Grafana Dashboard:**
+1. Login to Grafana
+2. Go to Configuration → Data Sources
+3. Verify Prometheus data source is configured (http://prometheus-service:9090)
+4. Create Dashboard or Import:
+   - Dashboard ID: 10991 (Flask Prometheus Exporter)
+   - Or create custom dashboard with queries:
+     - Request rate: `rate(flask_http_request_total[5m])`
+     - Response time: `flask_http_request_duration_seconds_sum / flask_http_request_duration_seconds_count`
+     - Error rate: `rate(flask_http_request_exceptions_total[5m])`
+
+## Monitoring Guide
+
+### View Application Logs
+```bash
+# View logs for the ML application
+kubectl logs -l app=heart-disease-app
+
+# Follow logs in real-time
+kubectl logs -f deployment/heart-disease-app
+
+# View logs for specific pod
+kubectl logs <pod-name>
+```
+
+### View Prometheus Metrics
+```bash
+# Check Prometheus metrics endpoint
+curl http://localhost/metrics
+```
+
+### Monitor Resource Usage
+```bash
+# Watch pod status in real-time
+kubectl get pods -w
+
+# View resource usage
+kubectl top pods
+kubectl top nodes
+```
+
+### View Events
+```bash
+# View recent events
+kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
+
+# Watch events in real-time
+kubectl get events -w
+```
+
+### Describe Resources
+```bash
+# Get detailed information about deployment
+kubectl describe deployment heart-disease-app
+
+# Get detailed information about pod
+kubectl describe pod <pod-name>
+
+# Get detailed information about service
+kubectl describe service heart-disease-app-service
 ```
 
 ## Scaling
 
-Scale up:
+Scale up the application:
 ```bash
 kubectl scale deployment heart-disease-app --replicas=3
 kubectl get pods
@@ -180,45 +300,33 @@ Scale down:
 kubectl scale deployment heart-disease-app --replicas=1
 ```
 
-## Monitoring
+## Troubleshooting
 
-Watch pod status in real-time:
+### Check Pod Logs
 ```bash
-kubectl get pods -w
+kubectl logs deployment/heart-disease-app
+kubectl logs deployment/prometheus
+kubectl logs deployment/grafana
 ```
 
-Describe deployment details:
+### Check Pod Status
 ```bash
-kubectl describe deployment heart-disease-app
+kubectl get pods
+kubectl describe pod <pod-name>
 ```
 
-View service endpoints:
+### Restart Deployment
+```bash
+kubectl rollout restart deployment heart-disease-app
+kubectl rollout restart deployment prometheus
+kubectl rollout restart deployment grafana
+```
+
+### Check Service Endpoints
 ```bash
 kubectl get endpoints heart-disease-app-service
-```
-
-View recent events:
-```bash
-kubectl get events --sort-by=.metadata.creationTimestamp | tail -20
-```
-
-## Verification Commands
-
-Run these commands for documentation:
-```bash
-# 1. Show all resources
-kubectl get all
-
-# 2. Show deployment details
-kubectl describe deployment heart-disease-app
-
-# 3. Show pod details
-kubectl get pods -o wide
-
-# 4. Show service details
-kubectl get svc heart-disease-app-service
-
-# 5. Test endpoints
+kubectl get endpoints prometheus-service
+kubectl get endpoints grafana-service
 ```
 
 ## Cleanup
@@ -232,8 +340,8 @@ Or delete individually:
 ```bash
 kubectl delete deployment heart-disease-app
 kubectl delete service heart-disease-app-service
-```
-```
-curl http://localhost/health
-curl -X POST http://localhost/predict -H "Content-Type: application/json" -d '{"age": 63, "sex": 1, "cp": 3, "trestbps": 145, "chol": 233, "fbs": 1, "restecg": 0, "thalach": 150, "exang": 0, "oldpeak": 2.3, "slope": 0, "ca": 0, "thal": 1}'
+kubectl delete deployment prometheus
+kubectl delete service prometheus-service
+kubectl delete deployment grafana
+kubectl delete service grafana-service
 ```
