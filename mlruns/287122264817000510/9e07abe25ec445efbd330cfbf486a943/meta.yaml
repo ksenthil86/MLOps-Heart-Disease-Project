@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/MLOpsProject/mlruns/287122264817000510/9e07abe25ec445efbd330cfbf486a943/artifacts
+end_time: 1767521899482
+entry_point_name: ''
+experiment_id: '287122264817000510'
+lifecycle_stage: active
+run_id: 9e07abe25ec445efbd330cfbf486a943
+run_name: LogisticRegression
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767521887102
+status: 3
+tags: []
+user_id: amanm

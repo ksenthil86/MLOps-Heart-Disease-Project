@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/MLOpsProject/mlruns/287122264817000510/models/m-9dfe51aa8db447ae877eb88efcc75511/artifacts
+creation_timestamp: 1767523563268
+experiment_id: '287122264817000510'
+last_updated_timestamp: 1767523574036
+model_id: m-9dfe51aa8db447ae877eb88efcc75511
+model_type: null
+name: intelligent-bug-394
+source_run_id: fd5074fad12d45dd810c76c9a1ba9425
+status: 2
+status_message: null

@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/MLOpsProject/mlruns/287122264817000510/models/m-b895662d51a645d5837a63cd9c6426fa/artifacts
+creation_timestamp: 1767524783202
+experiment_id: '287122264817000510'
+last_updated_timestamp: 1767524794597
+model_id: m-b895662d51a645d5837a63cd9c6426fa
+model_type: null
+name: unleashed-stork-729
+source_run_id: 6b61684e3b7c4a0f8fb25d58e0178355
+status: 2
+status_message: null

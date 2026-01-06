@@ -1,0 +1,15 @@
+creation_timestamp: 1767524803464
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1767524803464
+model_id: m-417d3978fd3d4f74b10d153025da25a3
+name: RandomForest_Heart_Classifier
+run_id: df0b279f03b847d5adb8f201db41473b
+run_link: null
+source: models:/m-417d3978fd3d4f74b10d153025da25a3
+status: READY
+status_message: null
+storage_location: file:C:/Users/MLOpsProject/mlruns/287122264817000510/models/m-417d3978fd3d4f74b10d153025da25a3/artifacts
+user_id: null
+version: 3

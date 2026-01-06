@@ -1,0 +1,10 @@
+artifact_location: file:C:/Users/MLOpsProject/mlruns/287122264817000510/models/m-417d3978fd3d4f74b10d153025da25a3/artifacts
+creation_timestamp: 1767524795305
+experiment_id: '287122264817000510'
+last_updated_timestamp: 1767524803404
+model_id: m-417d3978fd3d4f74b10d153025da25a3
+model_type: null
+name: bustling-boar-19
+source_run_id: df0b279f03b847d5adb8f201db41473b
+status: 2
+status_message: null

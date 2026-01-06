@@ -1,0 +1,14 @@
+artifact_uri: file:C:/Users/MLOpsProject/mlruns/287122264817000510/d636137d3f4b4e7ead024a7dfa9f7077/artifacts
+end_time: 1767523580923
+entry_point_name: ''
+experiment_id: '287122264817000510'
+lifecycle_stage: active
+run_id: d636137d3f4b4e7ead024a7dfa9f7077
+run_name: RandomForest
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767523574203
+status: 3
+tags: []
+user_id: amanm

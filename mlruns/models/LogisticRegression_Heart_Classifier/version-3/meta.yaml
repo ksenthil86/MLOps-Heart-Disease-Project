@@ -1,0 +1,15 @@
+creation_timestamp: 1767524794687
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1767524794687
+model_id: m-b895662d51a645d5837a63cd9c6426fa
+name: LogisticRegression_Heart_Classifier
+run_id: 6b61684e3b7c4a0f8fb25d58e0178355
+run_link: null
+source: models:/m-b895662d51a645d5837a63cd9c6426fa
+status: READY
+status_message: null
+storage_location: file:C:/Users/MLOpsProject/mlruns/287122264817000510/models/m-b895662d51a645d5837a63cd9c6426fa/artifacts
+user_id: null
+version: 3
