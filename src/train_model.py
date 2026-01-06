@@ -1,5 +1,6 @@
 # MLOPS_Heart_Disease/src/train_model.py
 
+from eda import run_eda
 import mlflow
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -67,17 +68,20 @@ def run_training():
     X_train, X_test, y_train, y_test = split_data(data)
     preprocessor = create_preprocessor(data)
 
-    # 3. Model Definitions
+    # 3.  EDA 
+    run_eda(data)
+
+    # 4. Model Definitions
     lr = LogisticRegression(solver='liblinear', random_state=42)
     rf = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    # 4. Training and Logging
+    # 5. Training and Logging
     lr_auc = train_and_log_model(lr, X_train, y_train, X_test, y_test,
                                  preprocessor, "LogisticRegression")
     rf_auc = train_and_log_model(rf, X_train, y_train, X_test, y_test,
                                  preprocessor, "RandomForest")
 
-    # 5. Final Decision
+    # 6. Final Decision
     if lr_auc > rf_auc:
         print(f"\nFinal Decision: Logistic Regression is the best model "
               f"(ROC AUC: {lr_auc:.4f}).")
