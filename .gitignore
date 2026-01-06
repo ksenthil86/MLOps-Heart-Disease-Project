@@ -34,10 +34,6 @@ venv.bak/
 .ipynb_checkpoints
 *.ipynb_checkpoints/
 
-# MLflow
-mlruns/
-mlartifacts/
-
 # Model files (uncomment if you don't want to track models)
 # models/*.pkl
 # *.pkl
