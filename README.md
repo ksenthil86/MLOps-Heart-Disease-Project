@@ -26,6 +26,10 @@ The project demonstrates comprehensive MLOps practices including:
 
 ---
 
+## Demo Video
+
+https://www.youtube.com/watch?v=FD73QdivBgw
+
 ## Model Training
 
 ### Prerequisites
@@ -196,7 +200,7 @@ Test with various patient profiles:
 
 **Patient with no heart disease indicators:**
 ```bash
-curl -X POST http://localhost:8080/predict \
+curl -X POST http://localhost/predict \
   -H "Content-Type: application/json" \
   -d '{
     "age": 45,
