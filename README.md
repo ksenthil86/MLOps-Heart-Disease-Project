@@ -199,10 +199,14 @@ curl -X POST http://localhost/predict \
     "thal": 1
   }'
 ```
+**Test prediction endpoint: Run Multiple Requests**
+```bash
+for i in {1..100}; do echo -n "Request $i: "; curl -s -o /dev/null -w "HTTP %{http_code}\n" -X POST http://localhost/predict -H "Content-Type: application/json" -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}'; done
+```
 
 #### Access Prometheus
 ```bash
-kubectl get svc prometheus-service
+kubectl get svc prometheus
 ```
 
 Access Prometheus UI:
@@ -212,13 +216,12 @@ Access Prometheus UI:
 
 **Useful Prometheus Queries:**
 - `flask_http_request_total` - Total HTTP requests
-- `flask_http_request_duration_seconds` - Request duration
 - `rate(flask_http_request_total[5m])` - Request rate over 5 minutes
 - `flask_http_request_exceptions_total` - Total exceptions
 
 #### Access Grafana
 ```bash
-kubectl get svc grafana-service
+kubectl get svc grafana
 ```
 
 Access Grafana UI:
@@ -228,13 +231,8 @@ Access Grafana UI:
 **Configure Grafana Dashboard:**
 1. Login to Grafana
 2. Go to Configuration → Data Sources
-3. Verify Prometheus data source is configured (http://prometheus-service:9090)
-4. Create Dashboard or Import:
-   - Dashboard ID: 10991 (Flask Prometheus Exporter)
-   - Or create custom dashboard with queries:
-     - Request rate: `rate(flask_http_request_total[5m])`
-     - Response time: `flask_http_request_duration_seconds_sum / flask_http_request_duration_seconds_count`
-     - Error rate: `rate(flask_http_request_exceptions_total[5m])`
+3. Verify Prometheus data source is configured (http://prometheus:9090). Click "Save & Test" - it should show "Data source is working".
+4. Create Dashboard with above Prometheus Queries
 
 ## Monitoring Guide
 
