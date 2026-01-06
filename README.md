@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project implements an end-to-end MLOps pipeline for heart disease prediction using machine learning. The system is designed to predict the presence of heart disease in patients based on various clinical parameters such as age, sex, chest pain type, blood pressure, cholesterol levels, and other medical indicators.
+This project implements an end-to-end MLOps pipeline for heart disease prediction ml classifier. The system is designed to predict the presence of heart disease in patients based on various clinical parameters such as age, sex, chest pain type, blood pressure, cholesterol levels, and other medical indicators.
 
 The project demonstrates comprehensive MLOps practices including:
 - **Data Processing & Feature Engineering**: Automated data cleaning, preprocessing, and feature transformation
@@ -16,9 +16,11 @@ The project demonstrates comprehensive MLOps practices including:
 
 | Name | BITS ID | Contribution |
 |------|---------|--------------|
-| [Your Name] | [Your BITS ID] | Model training, MLflow integration, feature engineering |
-| [Team Member 2] | [BITS ID 2] | Docker containerization, Kubernetes deployment, service configuration |
-| [Team Member 3] | [BITS ID 3] | Monitoring setup (Prometheus/Grafana), API development, logging implementation |
+| KIRANJEET KAUR ISHAR | 2024aa05769 | 100% |
+| SENTHILKUMAR K | 2024aa05227 | 100% |
+| SENTHIL KUMAR K | 2024aa05233 | 100% |
+| SHIV PRASAD VERMA | 2024aa05874 | 100% |
+| GURUPRASAD MISHRA | 2024aa05858 | 100% |
 
 ---
 
