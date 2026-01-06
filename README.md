@@ -93,8 +93,6 @@ To explore training metrics and experiments:
 mlflow ui
 ```
 
-Then open: http://localhost:5000
-
 ### Using the Trained Model
 
 The trained model (`models/heartDisease_Classifier.pkl`) is automatically used by:
@@ -103,6 +101,144 @@ The trained model (`models/heartDisease_Classifier.pkl`) is automatically used b
 - Kubernetes deployment
 
 After training a new model, rebuild and redeploy using the instructions provided in the next section.
+
+---
+
+## Local Development and Testing
+
+### Running the Flask API Locally
+
+1. **Ensure you have a trained model:**
+```bash
+# Check if model exists
+ls -lh models/heartDisease_Classifier.pkl
+
+# If not, train the model first
+python src/train_model.py
+```
+
+2. **Activate virtual environment:**
+```bash
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Or
+source .venv/bin/activate
+```
+
+3. **Run the Flask application:**
+```bash
+python app.py
+```
+
+The application will start on `http://localhost:8080`
+
+**Expected output:**
+```
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://127.0.0.1:8080
+Press CTRL+C to quit
+```
+
+### Testing the Local API
+
+#### 1. Health Check
+```bash
+curl http://localhost:8080/health
+```
+
+**Expected response:**
+```json
+{
+  "status": "ok",
+  "model": "RandomForest_Heart_Classifier"
+}
+```
+
+#### 2. Make a Prediction
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 63,
+    "sex": 1,
+    "cp": 3,
+    "trestbps": 145,
+    "chol": 233,
+    "fbs": 1,
+    "restecg": 0,
+    "thalach": 150,
+    "exang": 0,
+    "oldpeak": 2.3,
+    "slope": 0,
+    "ca": 0,
+    "thal": 1
+  }'
+```
+
+**Expected response:**
+```json
+{
+  "prediction": 1,
+  "status": "Prediction successful",
+  "confidence_score": 0.85
+}
+```
+
+**Prediction values:**
+- `0` = No heart disease
+- `1` = Heart disease present
+
+
+### Testing with Different Patient Data
+
+Test with various patient profiles:
+
+**Patient with no heart disease indicators:**
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 45,
+    "sex": 0,
+    "cp": 0,
+    "trestbps": 120,
+    "chol": 180,
+    "fbs": 0,
+    "restecg": 0,
+    "thalach": 170,
+    "exang": 0,
+    "oldpeak": 0.0,
+    "slope": 2,
+    "ca": 0,
+    "thal": 2
+  }'
+```
+
+**Patient with high-risk indicators:**
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 70,
+    "sex": 1,
+    "cp": 1,
+    "trestbps": 160,
+    "chol": 280,
+    "fbs": 1,
+    "restecg": 1,
+    "thalach": 100,
+    "exang": 1,
+    "oldpeak": 3.5,
+    "slope": 0,
+    "ca": 3,
+    "thal": 3
+  }'
+```
+
+### Stopping the Application
+
+Press `CTRL+C` in the terminal where the app is running.
 
 ---
 
@@ -199,10 +335,14 @@ curl -X POST http://localhost/predict \
     "thal": 1
   }'
 ```
+**Test prediction endpoint: Run Multiple Requests**
+```bash
+for i in {1..100}; do echo -n "Request $i: "; curl -s -o /dev/null -w "HTTP %{http_code}\n" -X POST http://localhost/predict -H "Content-Type: application/json" -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}'; done
+```
 
 #### Access Prometheus
 ```bash
-kubectl get svc prometheus-service
+kubectl get svc prometheus
 ```
 
 Access Prometheus UI:
@@ -212,13 +352,12 @@ Access Prometheus UI:
 
 **Useful Prometheus Queries:**
 - `flask_http_request_total` - Total HTTP requests
-- `flask_http_request_duration_seconds` - Request duration
 - `rate(flask_http_request_total[5m])` - Request rate over 5 minutes
 - `flask_http_request_exceptions_total` - Total exceptions
 
 #### Access Grafana
 ```bash
-kubectl get svc grafana-service
+kubectl get svc grafana
 ```
 
 Access Grafana UI:
@@ -228,13 +367,8 @@ Access Grafana UI:
 **Configure Grafana Dashboard:**
 1. Login to Grafana
 2. Go to Configuration → Data Sources
-3. Verify Prometheus data source is configured (http://prometheus-service:9090)
-4. Create Dashboard or Import:
-   - Dashboard ID: 10991 (Flask Prometheus Exporter)
-   - Or create custom dashboard with queries:
-     - Request rate: `rate(flask_http_request_total[5m])`
-     - Response time: `flask_http_request_duration_seconds_sum / flask_http_request_duration_seconds_count`
-     - Error rate: `rate(flask_http_request_exceptions_total[5m])`
+3. Verify Prometheus data source is configured (http://prometheus:9090). Click "Save & Test" - it should show "Data source is working".
+4. Create Dashboard with above Prometheus Queries
 
 ## Monitoring Guide
 
