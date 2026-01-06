@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from eda import run_eda
 
 # Headers for the Cleveland dataset (14 columns)
 COLUMNS = [
@@ -83,5 +84,7 @@ if __name__ == '__main__':
     preprocessor = create_preprocessor(data)
     print(f"data_processor.py: Data loaded ({data.shape[0]} rows) and split "
           f"successfully.")
+    print(f"run EDA on data")
+    run_eda(data)
+    
 
-# W292 Fix: file ke aakhir mein ek blank line hai
