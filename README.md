@@ -93,8 +93,6 @@ To explore training metrics and experiments:
 mlflow ui
 ```
 
-Then open: http://localhost:5000
-
 ### Using the Trained Model
 
 The trained model (`models/heartDisease_Classifier.pkl`) is automatically used by:
@@ -103,6 +101,144 @@ The trained model (`models/heartDisease_Classifier.pkl`) is automatically used b
 - Kubernetes deployment
 
 After training a new model, rebuild and redeploy using the instructions provided in the next section.
+
+---
+
+## Local Development and Testing
+
+### Running the Flask API Locally
+
+1. **Ensure you have a trained model:**
+```bash
+# Check if model exists
+ls -lh models/heartDisease_Classifier.pkl
+
+# If not, train the model first
+python src/train_model.py
+```
+
+2. **Activate virtual environment:**
+```bash
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Or
+source .venv/bin/activate
+```
+
+3. **Run the Flask application:**
+```bash
+python app.py
+```
+
+The application will start on `http://localhost:8080`
+
+**Expected output:**
+```
+ * Serving Flask app 'app'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://127.0.0.1:8080
+Press CTRL+C to quit
+```
+
+### Testing the Local API
+
+#### 1. Health Check
+```bash
+curl http://localhost:8080/health
+```
+
+**Expected response:**
+```json
+{
+  "status": "ok",
+  "model": "RandomForest_Heart_Classifier"
+}
+```
+
+#### 2. Make a Prediction
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 63,
+    "sex": 1,
+    "cp": 3,
+    "trestbps": 145,
+    "chol": 233,
+    "fbs": 1,
+    "restecg": 0,
+    "thalach": 150,
+    "exang": 0,
+    "oldpeak": 2.3,
+    "slope": 0,
+    "ca": 0,
+    "thal": 1
+  }'
+```
+
+**Expected response:**
+```json
+{
+  "prediction": 1,
+  "status": "Prediction successful",
+  "confidence_score": 0.85
+}
+```
+
+**Prediction values:**
+- `0` = No heart disease
+- `1` = Heart disease present
+
+
+### Testing with Different Patient Data
+
+Test with various patient profiles:
+
+**Patient with no heart disease indicators:**
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 45,
+    "sex": 0,
+    "cp": 0,
+    "trestbps": 120,
+    "chol": 180,
+    "fbs": 0,
+    "restecg": 0,
+    "thalach": 170,
+    "exang": 0,
+    "oldpeak": 0.0,
+    "slope": 2,
+    "ca": 0,
+    "thal": 2
+  }'
+```
+
+**Patient with high-risk indicators:**
+```bash
+curl -X POST http://localhost:8080/predict \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 70,
+    "sex": 1,
+    "cp": 1,
+    "trestbps": 160,
+    "chol": 280,
+    "fbs": 1,
+    "restecg": 1,
+    "thalach": 100,
+    "exang": 1,
+    "oldpeak": 3.5,
+    "slope": 0,
+    "ca": 3,
+    "thal": 3
+  }'
+```
+
+### Stopping the Application
+
+Press `CTRL+C` in the terminal where the app is running.
 
 ---
 
